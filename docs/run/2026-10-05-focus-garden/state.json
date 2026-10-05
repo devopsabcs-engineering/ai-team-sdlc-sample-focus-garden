@@ -1,0 +1,479 @@
+{
+  "runId": "2026-10-05-focus-garden",
+  "spec": "specs/idea.md",
+  "status": "done",
+  "currentPhase": "done",
+  "updatedAt": "2026-10-05T23:01:23Z",
+  "signoff": {
+    "status": "approved",
+    "artifact": {
+      "branch": "feature/focus-garden",
+      "commit": "5d3c73fa286b3e58138da4339e8909149172ec57",
+      "tree": "7c1db614c64697fecfc664c5080788eb3c8a865c"
+    },
+    "approvers": {
+      "product_owner": {
+        "identity": "Emmanuel Knafo (GitHub user emmanuelknafo)",
+        "source": "Human turn in VS Code chat on 2026-10-05",
+        "verbatimApproval": "Approve all three roles for 5d3c73f and deploy"
+      },
+      "security_team": {
+        "identity": "Emmanuel Knafo (GitHub user emmanuelknafo)",
+        "source": "Human turn in VS Code chat on 2026-10-05",
+        "verbatimApproval": "Approve all three roles for 5d3c73f and deploy"
+      },
+      "tech_lead": {
+        "identity": "Emmanuel Knafo (GitHub user emmanuelknafo)",
+        "source": "Human turn in VS Code chat on 2026-10-05",
+        "verbatimApproval": "Approve all three roles for 5d3c73f and deploy"
+      }
+    },
+    "grantedAt": "2026-10-05T16:12:05.406-04:00"
+  },
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "Design the Focus Garden experience",
+      "owner": "ait-product-designer",
+      "phase": "plan",
+      "deps": [],
+      "acceptance": "Define accessible user journeys, responsive wireframes, distinctive visual direction, three theme token sets, interaction states, and acceptance-ready UX notes for all v1 flows.",
+      "retries": 0,
+      "requiredGates": [
+        "design-review"
+      ],
+      "gateResults": {
+        "design-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-002",
+      "title": "Build and verify the clickable prototype",
+      "owner": "ait-product-designer",
+      "phase": "plan",
+      "deps": [
+        "T-001"
+      ],
+      "acceptance": "Create a throwaway runnable prototype for the core timer, completed-session garden, theme switching, and data-management flows; verify desktop and 360px mobile behavior, keyboard/a11y smoke, reduced motion, and zero console errors with Playwright.",
+      "retries": 0,
+      "requiredGates": [
+        "prototype-review"
+      ],
+      "gateResults": {
+        "prototype-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-003",
+      "title": "Write the v1 product requirements",
+      "owner": "ait-product-owner",
+      "phase": "plan",
+      "deps": [
+        "T-002"
+      ],
+      "acceptance": "Produce a prioritized PRD with measurable acceptance criteria, explicit non-goals, accessibility and offline requirements, analytics-free privacy constraints, and backlog slices informed by the verified prototype.",
+      "retries": 2,
+      "requiredGates": [
+        "spec-review"
+      ],
+      "gateResults": {
+        "spec-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-004",
+      "title": "Specify the frontend architecture",
+      "owner": "ait-architect",
+      "phase": "plan",
+      "deps": [
+        "T-003"
+      ],
+      "acceptance": "Produce implementation-ready Vite and TypeScript architecture, module boundaries, timer and persistence models, PWA and GitHub Pages strategy, accessibility contracts, test strategy, and key ADRs consistent with the PRD.",
+      "retries": 0,
+      "requiredGates": [
+        "spec-review"
+      ],
+      "gateResults": {
+        "spec-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-005",
+      "title": "Create the production shell and theme system",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-004"
+      ],
+      "acceptance": "Create an independent Vite TypeScript app with exact Pages base, semantic hash-routed shell, approved responsive Greenhouse instrument UI, all three CSS-variable themes, CSP, formatting, linting, and foundational tests.",
+      "retries": 1,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-006",
+      "title": "Implement versioned local persistence",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-005"
+      ],
+      "acceptance": "Implement strict schema-v1 decoding, canonical localStorage repository, safe initialization/migration, typed storage failures, and atomic one-key writes with unit tests.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-007",
+      "title": "Implement the accessible paired timer",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-006"
+      ],
+      "acceptance": "Implement exact paired presets, optional label, wall-clock timer states, pause/resume/reset, reload reconciliation, bounded announcements, keyboard behavior, and deterministic clock tests.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-008",
+      "title": "Implement completion reward and breaks",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-007"
+      ],
+      "acceptance": "Implement once-only durable focus completion, testable random species selection, original accessible plant assets and reduced-motion growth, modal focus behavior, muteable chime, and explicit non-rewarding breaks.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-009",
+      "title": "Implement the weekly garden",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-008"
+      ],
+      "acceptance": "Implement Monday-Sunday grouping, streak and total calculations, responsive garden, accessible plant details with task labels, empty/dense states, and DST/calendar unit tests.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-010",
+      "title": "Implement local data controls",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-009"
+      ],
+      "acceptance": "Implement complete JSON export, strict 1 MiB/10,000-record import preview and atomic replacement, clear-all confirmation, corrupt/quota recovery, cancel safety, and XSS-safe rendering with tests.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-011",
+      "title": "Add offline PWA and release automation",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-010"
+      ],
+      "acceptance": "Add installable manifest/icons, exact-subpath scoped service worker with coherent update prompt, offline app/core flows, GitHub Pages workflow that does not deploy during this run, Playwright harness, and audit/performance checks.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-012",
+      "title": "Validate integrated acceptance",
+      "owner": "ait-qa-test",
+      "phase": "test",
+      "deps": [
+        "T-011"
+      ],
+      "acceptance": "Verify all PRD acceptance criteria with unit and Playwright evidence, keyboard/a11y and reduced-motion checks, offline/subpath/update flows, import/export, privacy network inspection, performance, audit, and prototype separation.",
+      "retries": 0,
+      "requiredGates": [
+        "acceptance"
+      ],
+      "gateResults": {
+        "acceptance": "passed"
+      },
+      "acceptanceOutcome": "passed-with-human-waiver",
+      "humanWaiver": {
+        "identity": "Emmanuel Knafo (GitHub user emmanuelknafo)",
+        "verbatimAnswer": "Waive for this demo",
+        "criteria": [
+          "Representative screen-reader verification",
+          "Current Safari offline/update verification",
+          "Manual 200% zoom/320px, forced-colors, and browser-matrix inspection"
+        ]
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-013",
+      "title": "Perform blocking critic review",
+      "owner": "ait-code-reviewer",
+      "phase": "test",
+      "deps": [
+        "T-012"
+      ],
+      "acceptance": "Review the implemented product for blocking correctness, reliability, accessibility, maintainability, and architecture defects; all blocking findings are resolved.",
+      "retries": 1,
+      "requiredGates": [
+        "critic-review"
+      ],
+      "gateResults": {
+        "critic-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-014",
+      "title": "Perform security privacy and RAI review",
+      "owner": "ait-security-rai",
+      "phase": "test",
+      "deps": [
+        "T-013"
+      ],
+      "acceptance": "Complete SAST, secret scan, dependency audit, supply-chain/workflow review, local-data privacy review, import threat analysis, and habit/reward RAI review with no unresolved blocking finding.",
+      "retries": 0,
+      "requiredGates": [
+        "security"
+      ],
+      "gateResults": {
+        "security": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-015",
+      "title": "Correct plant art and route focus styling",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-014"
+      ],
+      "acceptance": "Eliminate malformed SVG path data for all six species; make every species clearly distinct in shape and colour, noticeably larger and delightful across Botanical Garden, Midnight Garden, and High Contrast while preserving WCAG AA contrast; and use focus-visible semantics so keyboard focus remains visible without a large main-region outline after programmatic hash-route focus. Add regression coverage for zero console errors, valid SVG paths for every species in the garden and completion modal across all themes, visual distinctness, and keyboard/programmatic focus behavior.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-016",
+      "title": "Validate requested-change regressions",
+      "owner": "ait-qa-test",
+      "phase": "test",
+      "deps": [
+        "T-015"
+      ],
+      "acceptance": "Verify the production build with focus-garden:state seeded with 21 sessions across all six species; prove zero console errors and zero invalid SVG path data for every species in the garden and completion modal across all three themes; verify clear visual shape and palette distinction, larger delightful rendering, AA contrast, keyboard-visible focus, no main-region outline after programmatic hash navigation, and rerun build, lint, format, unit, E2E, PWA, and audit gates.",
+      "retries": 1,
+      "requiredGates": [
+        "acceptance"
+      ],
+      "gateResults": {
+        "acceptance": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-017",
+      "title": "Repeat blocking critic review",
+      "owner": "ait-code-reviewer",
+      "phase": "test",
+      "deps": [
+        "T-016"
+      ],
+      "acceptance": "Review the requested-change implementation and regression evidence for unresolved blocking correctness, reliability, accessibility, maintainability, visual-distinctness, SVG, or focus-management defects.",
+      "retries": 0,
+      "requiredGates": [
+        "critic-review"
+      ],
+      "gateResults": {
+        "critic-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-018",
+      "title": "Repeat security privacy and RAI review",
+      "owner": "ait-security-rai",
+      "phase": "test",
+      "deps": [
+        "T-021"
+      ],
+      "acceptance": "Repeat SAST, secrets, dependency/SCA, supply-chain, privacy, import-threat, PWA, and Responsible-AI checks against the corrected artifact with no unresolved blocking finding.",
+      "retries": 1,
+      "requiredGates": [
+        "security"
+      ],
+      "gateResults": {
+        "security": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-019",
+      "title": "Repair dependency lockfile reproducibility",
+      "owner": "ait-frontend-dev",
+      "phase": "build",
+      "deps": [
+        "T-017"
+      ],
+      "acceptance": "Repair package-lock.json so the repository's Node 24/npm release environment performs a deterministic clean npm ci without missing third-party-web or mutable-resolution failure; preserve dependency security thresholds and application behavior.",
+      "retries": 0,
+      "requiredGates": [
+        "build",
+        "lint",
+        "unit"
+      ],
+      "gateResults": {
+        "build": "passed",
+        "lint": "passed",
+        "unit": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-020",
+      "title": "Revalidate repaired dependency artifact",
+      "owner": "ait-qa-test",
+      "phase": "test",
+      "deps": [
+        "T-019"
+      ],
+      "acceptance": "Prove a clean Node 24-compatible npm ci succeeds and rerun build, lint, format, unit, E2E, PWA, performance, and high-severity audit gates without regressing requested-change acceptance.",
+      "retries": 0,
+      "requiredGates": [
+        "acceptance"
+      ],
+      "gateResults": {
+        "acceptance": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-021",
+      "title": "Review repaired dependency artifact",
+      "owner": "ait-code-reviewer",
+      "phase": "test",
+      "deps": [
+        "T-020"
+      ],
+      "acceptance": "Review lockfile repair and complete artifact for blocking correctness, reproducibility, maintainability, accessibility, and supply-chain defects.",
+      "retries": 0,
+      "requiredGates": [
+        "critic-review"
+      ],
+      "gateResults": {
+        "critic-review": "passed"
+      },
+      "status": "done"
+    },
+    {
+      "id": "T-022",
+      "title": "Deploy the approved artifact to GitHub Pages",
+      "owner": "ait-devops",
+      "phase": "deploy",
+      "deps": [
+        "T-018"
+      ],
+      "acceptance": "Publish only approved commit 5d3c73fa286b3e58138da4339e8909149172ec57/tree 7c1db614c64697fecfc664c5080788eb3c8a865c to main and GitHub Pages; verify HTTP 200, manifest, service-worker scope, base-prefixed assets, no third-party requests, clean Chromium console where feasible, and document rollback.",
+      "retries": 0,
+      "requiredGates": [
+        "pre-deploy",
+        "smoke",
+        "rollback-ready"
+      ],
+      "gateResults": {
+        "pre-deploy": "passed",
+        "smoke": "passed",
+        "rollback-ready": "passed"
+      },
+      "status": "done"
+    }
+  ]
+}
