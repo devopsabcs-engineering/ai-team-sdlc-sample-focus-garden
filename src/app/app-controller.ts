@@ -501,6 +501,7 @@ export class AppController {
         repository: this.#repository,
         sessionId: timer.id,
         now: this.#now,
+        clearTimer: action === "done",
       }),
     );
     if (!result.ok) {

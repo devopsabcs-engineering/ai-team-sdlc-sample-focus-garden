@@ -157,4 +157,41 @@ describe("durable focus completion", () => {
       "2026-10-05T13:25:02.000Z",
     );
   });
+
+  it("atomically dismisses a reward to idle without removing its session", () => {
+    const repo = repository();
+    completeDueFocus({
+      repository: repo,
+      timerId: UUID_2,
+      clock: { now: () => BOUNDARY },
+      now: () => "2026-10-05T13:25:00.000Z",
+      random: { next: () => 0 },
+    });
+    const replace = vi.spyOn(repo, "replace");
+
+    const result = acknowledgeReward({
+      repository: repo,
+      sessionId: UUID_2,
+      now: () => "2026-10-05T13:25:02.000Z",
+      clearTimer: true,
+    });
+
+    expect(replace).toHaveBeenCalledOnce();
+    expect(result).toMatchObject({
+      ok: true,
+      state: {
+        preferences: { selectedPreset: "25-5" },
+        activeTimer: null,
+        sessions: [{ id: UUID_2 }],
+      },
+    });
+    expect(repo.load()).toMatchObject({
+      ok: true,
+      value: {
+        preferences: { selectedPreset: "25-5" },
+        activeTimer: null,
+        sessions: [{ id: UUID_2 }],
+      },
+    });
+  });
 });

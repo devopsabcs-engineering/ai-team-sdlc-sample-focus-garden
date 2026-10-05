@@ -97,6 +97,7 @@ export function acknowledgeReward(options: {
   readonly repository: StateRepository;
   readonly sessionId: string;
   readonly now: () => string;
+  readonly clearTimer?: boolean;
 }): AcknowledgeResult {
   const loaded = options.repository.load();
   if (!loaded.ok) return loaded;
@@ -105,16 +106,20 @@ export function acknowledgeReward(options: {
     timer?.id !== options.sessionId ||
     timer.kind !== "focus" ||
     timer.phase !== "completed" ||
-    timer.rewardAcknowledgedAt !== null ||
     !loaded.value.sessions.some((session) => session.id === timer.id)
   ) {
+    return { ok: true, state: loaded.value };
+  }
+  if (timer.rewardAcknowledgedAt !== null && !options.clearTimer) {
     return { ok: true, state: loaded.value };
   }
   const acknowledgedAt = options.now();
   const next: FocusGardenStateV1 = {
     ...loaded.value,
     savedAt: acknowledgedAt,
-    activeTimer: { ...timer, rewardAcknowledgedAt: acknowledgedAt },
+    activeTimer: options.clearTimer
+      ? null
+      : { ...timer, rewardAcknowledgedAt: acknowledgedAt },
   };
   const saved = options.repository.replace(next);
   return saved.ok ? { ok: true, state: next } : saved;

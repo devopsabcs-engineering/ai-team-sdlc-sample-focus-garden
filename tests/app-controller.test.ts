@@ -373,10 +373,11 @@ describe("timer application integration", () => {
     ).toBe("Start another focus");
   });
 
-  it("restores focus on Done and persists reward acknowledgement", async () => {
+  it("returns to persisted idle on Done and retains the session and preset after reload", async () => {
     const { clock, controller, repository, root } = setup();
+    root.querySelector<HTMLInputElement>('input[value="50-10"]')?.click();
     click('[data-command="timer-primary"]', root);
-    clock.value += 1_500_000;
+    clock.value += 3_000_000;
     controller.reconcile();
     await vi.waitFor(() => {
       expect(
@@ -393,16 +394,97 @@ describe("timer application integration", () => {
 
     await vi.waitFor(() => {
       const loaded = repository.load();
-      expect(
-        loaded.ok && loaded.value.activeTimer?.rewardAcknowledgedAt,
-      ).not.toBeNull();
+      expect(loaded.ok && loaded.value.activeTimer).toBeNull();
+      expect(loaded.ok && loaded.value.sessions).toHaveLength(1);
+      expect(loaded.ok && loaded.value.preferences.selectedPreset).toBe(
+        "50-10",
+      );
       expect(document.activeElement?.getAttribute("data-command")).toBe(
         "timer-primary",
       );
     });
     expect(
       root.querySelector('[data-command="timer-primary"]')?.textContent,
-    ).toBe("Start 5-minute break");
+    ).toBe("Start focus");
+
+    controller.reload();
+    expect(repository.load()).toMatchObject({
+      ok: true,
+      value: {
+        preferences: { selectedPreset: "50-10" },
+        activeTimer: null,
+        sessions: [{ id: UUID_2 }],
+      },
+    });
+    expect(
+      root.querySelector('[data-command="timer-primary"]')?.textContent,
+    ).toBe("Start focus");
+  });
+
+  it("treats Escape as Done and returns the completed timer to idle", async () => {
+    const { clock, controller, repository, root } = setup();
+    click('[data-command="timer-primary"]', root);
+    clock.value += 1_500_000;
+    controller.reconcile();
+    const dialog = await vi.waitFor(() => {
+      const candidate =
+        root.querySelector<HTMLDialogElement>(".completion-dialog");
+      expect(candidate?.hasAttribute("open")).toBe(true);
+      return candidate;
+    });
+
+    dialog?.dispatchEvent(new Event("cancel", { cancelable: true }));
+
+    await vi.waitFor(() => {
+      expect(repository.load()).toMatchObject({
+        ok: true,
+        value: { activeTimer: null, sessions: [{ id: UUID_2 }] },
+      });
+      expect(dialog?.hasAttribute("open")).toBe(false);
+    });
+    expect(
+      root.querySelector('[data-command="timer-primary"]')?.textContent,
+    ).toBe("Start focus");
+  });
+
+  it("keeps the completion dialog open when Done cannot be persisted", async () => {
+    let state = createDefaultState(() => "2026-10-05T13:00:00.000Z");
+    let replacements = 0;
+    const repository: StateRepository = {
+      load: () => ({ ok: true, value: state }),
+      replace: (next) => {
+        replacements += 1;
+        if (replacements === 3) return { ok: false, code: "quota" };
+        state = next;
+        return { ok: true, value: undefined };
+      },
+      clear: () => ({ ok: true, value: undefined }),
+    };
+    const { clock, controller, root } = setup({ repository });
+    click('[data-command="timer-primary"]', root);
+    clock.value += 1_500_000;
+    controller.reconcile();
+    const dialog = await vi.waitFor(() => {
+      const candidate =
+        root.querySelector<HTMLDialogElement>(".completion-dialog");
+      expect(candidate?.hasAttribute("open")).toBe(true);
+      return candidate;
+    });
+    const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
+      (button) => button.textContent === "Done",
+    );
+
+    done?.click();
+
+    await vi.waitFor(() => {
+      expect(root.textContent).toContain(
+        "Completion can’t be saved on this device right now.",
+      );
+      expect(dialog?.hasAttribute("open")).toBe(true);
+      expect(done?.disabled).toBe(false);
+    });
+    expect(state.activeTimer?.phase).toBe("completed");
+    expect(state.sessions).toHaveLength(1);
   });
 
   it("recovers an unacknowledged reward without replaying audio", () => {
