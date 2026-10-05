@@ -1,13 +1,12 @@
 import { mkdirSync, readFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
+import { chromium } from "@playwright/test";
 
 const url = "http://127.0.0.1:4173/ai-team-sdlc-sample-focus-garden/";
 const reports = "evidence/lighthouse";
 const chromePort = 9222;
-const chromePath =
-  process.env.CHROME_PATH ??
-  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+const chromePath = process.env.CHROME_PATH ?? chromium.executablePath();
 
 function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
