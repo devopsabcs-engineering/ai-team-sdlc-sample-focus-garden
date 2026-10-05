@@ -1,0 +1,220 @@
+.site-header {
+  border-block-end: var(--border-thin) solid var(--border);
+  background: var(--surface);
+}
+
+.site-header__inner,
+main {
+  width: min(100% - 2rem, var(--content-max));
+  margin-inline: auto;
+}
+
+.site-header__inner {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.status-region:not(:empty),
+.pwa-region:not(:empty) {
+  width: min(100% - 2rem, var(--content-max));
+  margin: var(--space-4) auto 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-thin) solid var(--warning);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.pwa-region:empty {
+  display: none;
+}
+
+.pwa-region__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.brand {
+  margin-inline-end: auto;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header-tools {
+  display: flex;
+  gap: var(--space-2);
+}
+
+main {
+  padding-block: var(--space-8) calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+.focus-layout {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.focus-instrument {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+}
+
+.focus-instrument > .eyebrow,
+.focus-instrument > h1 {
+  align-self: stretch;
+}
+
+.session-panel {
+  display: none;
+}
+
+.garden-title-row {
+  display: flex;
+  gap: var(--space-6);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.garden-bed {
+  display: grid;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  border-block: var(--border-thin) solid var(--border);
+  list-style: none;
+}
+
+.garden-day {
+  display: grid;
+  min-height: 5.5rem;
+  align-items: start;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-block-end: var(--border-thin) solid var(--border);
+}
+
+.garden-day__label {
+  grid-row: 1 / span 3;
+}
+
+.garden-day__soil,
+.garden-day__status,
+.garden-day__plants {
+  grid-column: 2;
+}
+
+.garden-day:last-child {
+  border-block-end: 0;
+}
+
+.empty-garden {
+  max-width: 32rem;
+  margin: var(--space-12) auto 0;
+  text-align: center;
+}
+
+.primary-nav--header {
+  display: none;
+}
+
+.primary-nav--bottom {
+  position: fixed;
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: var(--space-2) var(--space-4)
+    calc(var(--space-2) + env(safe-area-inset-bottom));
+  border-block-start: var(--border-thin) solid var(--border);
+  background: var(--surface);
+}
+
+@media (min-width: 48rem) {
+  .site-header__inner,
+  main {
+    width: min(100% - 3rem, var(--content-max));
+  }
+
+  main {
+    padding-block: var(--space-12);
+  }
+
+  .primary-nav--header {
+    display: flex;
+  }
+
+  .primary-nav--bottom {
+    display: none;
+  }
+
+  .focus-layout {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .garden-bed {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border: var(--border-thin) solid var(--border);
+    border-radius: var(--radius-panel);
+  }
+
+  .garden-day {
+    min-height: 12rem;
+    align-content: start;
+    grid-template-columns: 1fr;
+    border-inline-end: var(--border-thin) solid var(--border);
+    border-block-end: 0;
+  }
+
+  .garden-day:last-child {
+    border-inline-end: 0;
+  }
+
+  .garden-day__label {
+    grid-row: auto;
+  }
+
+  .garden-day__soil,
+  .garden-day__status,
+  .garden-day__plants {
+    grid-column: 1;
+  }
+}
+
+@media (min-width: 64rem) {
+  main {
+    padding-block: var(--space-16);
+  }
+
+  .focus-layout {
+    max-width: none;
+    align-items: start;
+    grid-template-columns: minmax(0, 7fr) minmax(19rem, 5fr);
+    gap: var(--space-16);
+  }
+
+  .compact-setup {
+    display: none;
+  }
+
+  .session-panel {
+    display: block;
+    margin-block-start: var(--space-8);
+    padding: var(--space-8);
+    border: var(--border-thin) solid var(--border);
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+  }
+}

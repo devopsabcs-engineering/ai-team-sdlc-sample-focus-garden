@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en" data-theme="botanical">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Focus Garden — clickable prototype</title>
+  <style>
+    :root {
+      --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+      --font-body: Aptos, "Segoe UI", system-ui, sans-serif;
+      --font-data: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+      --motion-fast: 120ms;
+      --motion-state: 220ms;
+      --motion-grow: 600ms;
+      --target: 44px;
+    }
+    [data-theme="botanical"] {
+      color-scheme: light; --canvas:#f4f1e8; --surface:#fffcf5; --raised:#fff;
+      --sunken:#e6e8dc; --text:#183229; --muted:#53635c; --border:#a8b2a8;
+      --strong:#66786d; --action:#285b3a; --on-action:#fff; --hover:#1f492f;
+      --soft:#d8e6d8; --on-soft:#183229; --accent:#9a4a21; --highlight:#f9a620;
+      --focus:#8a3b15; --danger:#9f2f2b; --on-danger:#fff; --soil:#8a6247;
+      --track:#c9d0c5; --progress:#285b3a; --shadow:24 50 41;
+    }
+    [data-theme="golden"] {
+      color-scheme: light; --canvas:#fff5de; --surface:#fffbf2; --raised:#fff;
+      --sunken:#f1dfc4; --text:#3b2b22; --muted:#66564e; --border:#bdaa92;
+      --strong:#786654; --action:#7a3e22; --on-action:#fff; --hover:#61301b;
+      --soft:#f2d6b0; --on-soft:#3b2b22; --accent:#8b4b54; --highlight:#f4a900;
+      --focus:#235e72; --danger:#982e2e; --on-danger:#fff; --soil:#8a573c;
+      --track:#dcc9ad; --progress:#7a3e22; --shadow:59 43 34;
+    }
+    [data-theme="midnight"] {
+      color-scheme: dark; --canvas:#181326; --surface:#241c35; --raised:#2e2442;
+      --sunken:#120f1d; --text:#f3effa; --muted:#c4b9d4; --border:#625575;
+      --strong:#9384a8; --action:#d8b85d; --on-action:#21192e; --hover:#e8c96d;
+      --soft:#45395c; --on-soft:#f3effa; --accent:#afa1d4; --highlight:#ffd36a;
+      --focus:#ffd36a; --danger:#ffb4a9; --on-danger:#32110e; --soil:#a98168;
+      --track:#514662; --progress:#d8b85d; --shadow:0 0 0;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--canvas); color: var(--text); font-family: var(--font-body); }
+    body { margin: 0; min-width: 320px; line-height: 1.5; }
+    button, input, select { font: inherit; color: inherit; }
+    button, select { min-height: var(--target); }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--focus); outline-offset: 2px;
+    }
+    .skip { position:fixed; z-index:20; top:8px; left:8px; padding:10px 14px;
+      background:var(--action); color:var(--on-action); transform:translateY(-150%); }
+    .skip:focus { transform:none; }
+    header { border-bottom:1px solid var(--border); background:var(--surface); }
+    .topbar { max-width:1200px; margin:auto; min-height:72px; padding:12px 24px;
+      display:flex; align-items:center; gap:24px; }
+    .brand { font:700 1.35rem var(--font-display); margin-right:auto; }
+    .desktop-nav { display:flex; gap:6px; }
+    .nav-btn, .quiet, .icon-btn { border:1px solid transparent; background:transparent; border-radius:6px; }
+    .nav-btn { padding:8px 18px; }
+    .nav-btn[aria-current="page"] { background:var(--soft); border-color:var(--action); font-weight:700; }
+    .theme-select { border:1px solid var(--border); background:var(--surface); border-radius:6px; padding:0 10px; }
+    .icon-btn { border-color:var(--border); padding:6px 14px; }
+    main { max-width:1200px; margin:auto; padding:52px 24px 100px; }
+    .eyebrow { font:700 .75rem var(--font-data); letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+    h1, h2, h3, p { margin-top:0; }
+    h1 { font:600 clamp(2rem,4vw,3.2rem)/1.05 var(--font-display); margin-bottom:10px; }
+    h2, h3 { font-family:var(--font-display); }
+    .lede { color:var(--muted); max-width:58ch; }
+    .focus-layout { display:grid; grid-template-columns:minmax(0,7fr) minmax(300px,5fr); gap:56px; align-items:center; }
+    .dial-wrap { display:grid; place-items:center; margin:28px 0 10px; }
+    .dial { width:min(380px, 78vw); aspect-ratio:1; position:relative; display:grid; place-items:center; }
+    .dial svg { position:absolute; inset:0; width:100%; transform:rotate(-90deg); overflow:visible; }
+    .dial .track,.dial .arc { fill:none; stroke-width:5; }
+    .track { stroke:var(--track); }
+    .arc { stroke:var(--progress); stroke-linecap:round; stroke-dasharray:816; stroke-dashoffset:110;
+      transition:stroke-dashoffset var(--motion-state) ease; }
+    .seed { fill:var(--highlight); stroke:var(--text); stroke-width:2; transform-origin:150px 14px; }
+    .dial-copy { text-align:center; z-index:1; }
+    .time { display:block; font:600 clamp(3.5rem,9vw,6.5rem)/1 var(--font-display); letter-spacing:-.04em; }
+    .mode { font:700 .8rem var(--font-data); text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+    .session-status { text-align:center; min-height:24px; color:var(--muted); }
+    .panel { border:1px solid var(--border); border-radius:10px; padding:28px; background:var(--surface); }
+    label, legend { font-weight:700; }
+    input[type="text"] { width:100%; min-height:48px; margin:7px 0 22px; padding:10px 12px;
+      background:var(--raised); border:1px solid var(--strong); border-radius:6px; }
+    fieldset { border:0; padding:0; margin:0 0 24px; }
+    .presets { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .presets label { min-height:44px; display:flex; align-items:center; gap:7px; padding:8px 12px;
+      border:1px solid var(--border); border-radius:6px; background:var(--raised); }
+    .presets label:has(input:checked) { border:2px solid var(--action); background:var(--soft); color:var(--on-soft); }
+    .primary, .secondary, .danger { border-radius:6px; min-height:48px; padding:10px 18px; font-weight:700; }
+    .primary { border:2px solid var(--action); background:var(--action); color:var(--on-action); }
+    .primary:hover { background:var(--hover); }
+    .secondary { border:1px solid var(--strong); background:var(--surface); }
+    .danger { border:2px solid var(--danger); background:var(--danger); color:var(--on-danger); }
+    .button-row { display:flex; flex-wrap:wrap; gap:10px; }
+    .button-row .primary { flex:1; }
+    .privacy { color:var(--muted); font-size:.9rem; margin:20px 0 0; }
+    .prototype-only { margin-top:28px; padding-top:18px; border-top:1px dashed var(--border); color:var(--muted); font-size:.85rem; }
+    .prototype-only button { margin-top:8px; }
+    .notice { border-left:4px solid var(--action); background:var(--soft); padding:12px 14px; margin:20px 0; }
+    [hidden] { display:none !important; }
+    .stats { display:flex; gap:10px; margin:24px 0 28px; }
+    .stat { border:1px solid var(--border); background:var(--surface); border-radius:10px; padding:14px 18px; min-width:150px; }
+    .stat strong { display:block; font:600 1.5rem var(--font-display); }
+    .week { display:grid; grid-template-columns:repeat(7,1fr); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+    .day { min-height:210px; padding:14px 10px; background:var(--sunken); border-right:1px solid var(--border); }
+    .day:last-child { border:0; }
+    .day-label { font:700 .75rem var(--font-data); text-transform:uppercase; letter-spacing:.06em; }
+    .day-note { color:var(--muted); font-size:.82rem; margin-top:8px; }
+    .soil { height:4px; background:var(--soil); margin:10px 0; border-radius:4px; }
+    .plants { display:flex; flex-wrap:wrap; gap:4px; }
+    .plant { min-width:48px; min-height:52px; border:1px solid transparent; background:transparent;
+      border-radius:6px; font-size:1.85rem; padding:4px; }
+    .plant:hover,.plant:focus-visible { background:var(--surface); border-color:var(--action); }
+    .plant-detail { max-width:380px; margin:20px 0 0 auto; }
+    .plant-detail dl { display:grid; grid-template-columns:auto 1fr; gap:6px 12px; margin:0; }
+    .plant-detail dt { color:var(--muted); }
+    .empty { text-align:center; padding:70px 20px; border:1px dashed var(--border); border-radius:10px; }
+    dialog { width:min(640px, calc(100% - 32px)); max-height:calc(100vh - 32px); overflow:auto;
+      border:1px solid var(--border); border-radius:10px; background:var(--raised); color:var(--text);
+      box-shadow:0 18px 50px rgb(var(--shadow) / .18); padding:0; }
+    dialog::backdrop { background:rgb(10 18 14 / .55); }
+    .dialog-inner { padding:26px; }
+    .dialog-head { display:flex; align-items:center; gap:16px; }
+    .dialog-head h2 { margin:0 auto 0 0; }
+    .dialog-section { border-top:1px solid var(--border); margin-top:22px; padding-top:20px; }
+    .theme-options { display:grid; gap:8px; }
+    .theme-options label { display:flex; align-items:center; min-height:48px; border:1px solid var(--border); border-radius:6px; padding:8px 12px; }
+    .theme-options input { margin-right:10px; }
+    .swatches { display:flex; gap:3px; margin-left:auto; }
+    .swatches i { width:16px; height:16px; border:1px solid currentColor; border-radius:50%; background:var(--sw); }
+    .data-state { background:var(--sunken); border-radius:6px; padding:14px; margin-top:12px; }
+    .error { border-left:4px solid var(--danger); }
+    .completion-art { font-size:4.5rem; text-align:center; animation:grow var(--motion-grow) ease both; }
+    @keyframes grow { from { transform:scale(.35); opacity:.25 } to { transform:scale(1); opacity:1 } }
+    .bottom-nav { display:none; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width:767px) {
+      .topbar { min-height:64px; padding:10px 16px; gap:8px; }
+      .desktop-nav { display:none; }
+      .theme-select { width:50px; color:transparent; padding:0; background:var(--surface); }
+      .theme-select option { color:initial; }
+      .icon-btn { padding:6px 9px; }
+      main { padding:34px 16px 96px; }
+      .focus-layout { display:flex; flex-direction:column; gap:24px; align-items:stretch; }
+      .timer-column { display:flex; flex-direction:column; }
+      .timer-column .dial-wrap { order:2; }
+      .timer-column .session-status { order:3; }
+      .setup { order:1; }
+      .dial { width:min(240px, 72vw); }
+      .time { font-size:3.7rem; }
+      .panel { padding:20px; }
+      .prototype-only { order:4; }
+      .bottom-nav { position:fixed; z-index:10; display:grid; grid-template-columns:1fr 1fr; bottom:0; left:0; right:0;
+        padding:8px 12px max(8px, env(safe-area-inset-bottom)); background:var(--surface); border-top:1px solid var(--border); }
+      .bottom-nav .nav-btn { min-height:48px; }
+      .stats { display:grid; grid-template-columns:1fr 1fr; }
+      .stat { min-width:0; }
+      .week { display:block; border:0; }
+      .day { min-height:92px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; display:grid;
+        grid-template-columns:70px 1fr; align-items:start; gap:10px; }
+      .day > *:not(.day-label) { grid-column:2; }
+      .plant-detail { margin:14px 0 0; }
+      dialog { width:100%; max-height:100vh; height:100%; border-radius:0; }
+      .completion dialog { height:auto; width:calc(100% - 24px); border-radius:10px; }
+      .completion .button-row { display:grid; }
+      .completion .button-row > * { width:100%; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      :root { --motion-fast:0ms; --motion-state:0ms; --motion-grow:0ms; }
+      *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.001ms !important; transition-duration:.001ms !important; }
+    }
+    @media (forced-colors:active) {
+      .dial .track,.dial .arc,.seed { stroke:CanvasText; stroke-width:2px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header>
+    <div class="topbar">
+      <div class="brand">Focus Garden</div>
+      <nav class="desktop-nav" aria-label="Primary">
+        <button class="nav-btn" data-view="focus" aria-current="page">Focus</button>
+        <button class="nav-btn" data-view="garden">Garden</button>
+      </nav>
+      <label class="sr-only" for="quick-theme">Theme</label>
+      <select id="quick-theme" class="theme-select">
+        <option value="botanical">Botanical Garden</option>
+        <option value="golden">Golden Hour</option>
+        <option value="midnight">Midnight Garden</option>
+      </select>
+      <button class="icon-btn" id="settings-open" aria-haspopup="dialog">Settings</button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="focus-view" aria-labelledby="focus-heading">
+      <div class="focus-layout">
+        <div class="timer-column">
+          <div>
+            <div class="eyebrow">Focus / today</div>
+            <h1 id="focus-heading" tabindex="-1">What will you tend?</h1>
+            <p class="lede">Settle into one thing. A finished focus session grows a plant.</p>
+          </div>
+          <div class="dial-wrap">
+            <div class="dial" aria-hidden="true">
+              <svg viewBox="0 0 300 300"><circle class="track" cx="150" cy="150" r="130"/><circle class="arc" cx="150" cy="150" r="130"/><circle class="seed" cx="150" cy="20" r="8"/></svg>
+              <div class="dial-copy"><span class="time" id="time-text">25:00</span><span class="mode" id="mode-text">Focus · ready</span></div>
+            </div>
+            <span class="sr-only" id="timer-live" role="status" aria-live="polite">25 minutes, ready</span>
+          </div>
+          <p class="session-status" id="session-status">Your garden stays on this device.</p>
+          <div class="prototype-only">
+            <strong>Prototype shortcut</strong><br>Skip the wait to validate the reward and garden flow.
+            <button class="quiet" id="complete-demo">Preview completed session</button>
+          </div>
+        </div>
+        <div class="panel setup">
+          <div id="setup-form">
+            <label for="task-label">Task label <span class="sr-only">(optional)</span></label>
+            <input id="task-label" type="text" maxlength="80" placeholder="Draft project outline" aria-describedby="label-help">
+            <span id="label-help" class="sr-only">Optional. This appears in plant details.</span>
+            <fieldset>
+              <legend>Session length</legend>
+              <div class="presets">
+                <label><input type="radio" name="preset" value="25" checked> 25 / 5</label>
+                <label><input type="radio" name="preset" value="50"> 50 / 10</label>
+                <label><input type="radio" name="preset" value="15"> 15 / 3</label>
+              </div>
+            </fieldset>
+          </div>
+          <p id="locked-summary" hidden><strong>Current session</strong><br><span id="summary-text"></span><br><span class="lede">Label and length are available after this session.</span></p>
+          <div class="button-row">
+            <button class="primary" id="timer-action">Start focus</button>
+            <button class="secondary" id="reset-action">Reset</button>
+          </div>
+          <p class="privacy"><span aria-hidden="true">♪</span> Completion sound on · no account, tracking, or cloud.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="garden-view" aria-labelledby="garden-heading" hidden>
+      <div class="eyebrow">This week / Oct 5–11</div>
+      <h1 id="garden-heading" tabindex="-1">Your garden</h1>
+      <p class="lede">Each specimen marks finished focus, never unfinished effort.</p>
+      <div class="stats"><div class="stat"><strong id="streak">3-day</strong> streak</div><div class="stat"><strong id="minutes">100 min</strong> focused</div></div>
+      <div class="week" aria-label="Garden for this week">
+        <section class="day"><div class="day-label">Mon 5</div><div class="soil"></div><div class="plants"><button class="plant" data-plant="Fern" data-time="Mon, Oct 5 · 9:12 AM" data-minutes="25" data-task="Reading notes" aria-label="Fern, Monday, 25 focused minutes">🌿</button></div></section>
+        <section class="day"><div class="day-label">Tue 6</div><div class="soil"></div><div class="plants"><button class="plant" data-plant="Sprout" data-time="Tue, Oct 6 · 2:30 PM" data-minutes="25" data-task="Budget draft" aria-label="Sprout, Tuesday, 25 focused minutes">🌱</button></div></section>
+        <section class="day"><div class="day-label">Wed 7</div><div class="soil"></div><div class="plants"><button class="plant" data-plant="Sunflower" data-time="Wed, Oct 7 · 10:32 AM" data-minutes="50" data-task="Draft project outline" aria-label="Sunflower, Wednesday, 50 focused minutes">🌻</button></div></section>
+        <section class="day" id="today-bed"><div class="day-label">Thu 8 · Today</div><div class="soil"></div><div class="plants" id="today-plants"></div><div class="day-note" id="today-empty">Bare soil · no sessions</div></section>
+        <section class="day"><div class="day-label">Fri 9</div><div class="day-note">Upcoming</div></section>
+        <section class="day"><div class="day-label">Sat 10</div><div class="day-note">Upcoming</div></section>
+        <section class="day"><div class="day-label">Sun 11</div><div class="day-note">Upcoming</div></section>
+      </div>
+      <aside class="panel plant-detail" id="plant-detail" aria-live="polite" hidden>
+        <h2 id="plant-name">Plant details</h2>
+        <dl><dt>Finished</dt><dd id="plant-time"></dd><dt>Focus</dt><dd id="plant-minutes"></dd><dt>Task</dt><dd id="plant-task"></dd></dl>
+        <button class="quiet" id="detail-close">Close details</button>
+      </aside>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Primary">
+    <button class="nav-btn" data-view="focus" aria-current="page">Focus</button>
+    <button class="nav-btn" data-view="garden">Garden</button>
+  </nav>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-inner">
+      <div class="dialog-head"><h2 id="settings-title">Settings</h2><button class="icon-btn dialog-close" aria-label="Close settings">Close</button></div>
+      <section class="dialog-section"><div class="eyebrow">Theme</div>
+        <div class="theme-options">
+          <label><input type="radio" name="theme" value="botanical" checked>Botanical Garden<span class="swatches" aria-hidden="true"><i style="--sw:#285b3a"></i><i style="--sw:#f4f1e8"></i><i style="--sw:#f9a620"></i></span></label>
+          <label><input type="radio" name="theme" value="golden">Golden Hour<span class="swatches" aria-hidden="true"><i style="--sw:#7a3e22"></i><i style="--sw:#fff5de"></i><i style="--sw:#f4a900"></i></span></label>
+          <label><input type="radio" name="theme" value="midnight">Midnight Garden<span class="swatches" aria-hidden="true"><i style="--sw:#d8b85d"></i><i style="--sw:#181326"></i><i style="--sw:#afa1d4"></i></span></label>
+        </div>
+      </section>
+      <section class="dialog-section"><div class="eyebrow">Sound</div><label><input id="sound-toggle" type="checkbox" checked> Completion sound</label></section>
+      <section class="dialog-section"><div class="eyebrow">Your data</div><p>Stored only in this browser on this device.</p>
+        <div class="button-row"><button class="secondary" id="export-data">Export garden</button><button class="secondary" id="import-start">Import garden</button></div>
+        <div class="data-state" id="data-message" role="status" hidden></div>
+        <div class="data-state" id="import-choose" hidden>
+          <strong>Import garden</strong><p>Choose a prototype sample to validate import states.</p>
+          <div class="button-row"><button class="secondary" id="sample-valid">Choose valid sample</button><button class="secondary" id="sample-invalid">Choose invalid sample</button></div>
+        </div>
+        <div class="data-state" id="import-preview" hidden>
+          <strong>Ready to replace?</strong><p>18 plants · Sep 2–Oct 5<br>Replaces 4 current plants.</p>
+          <div class="button-row"><button class="primary" id="import-replace">Replace my garden</button><button class="secondary import-cancel">Cancel</button></div>
+        </div>
+        <div class="data-state error" id="import-error" role="alert" hidden>
+          <strong>This file doesn’t contain a valid Focus Garden.</strong><p>Your current garden is unchanged.</p>
+          <button class="secondary" id="choose-another">Choose another file</button>
+        </div>
+        <div style="margin-top:28px"><button class="danger" id="clear-start">Clear all data</button></div>
+      </section>
+      <section class="dialog-section"><div class="eyebrow">Install</div><p>Use your browser menu to install when available.</p><p class="lede">No account. No ads. No tracking.</p></section>
+    </div>
+  </dialog>
+
+  <dialog id="reset-dialog" aria-labelledby="reset-title"><div class="dialog-inner">
+    <h2 id="reset-title">Reset this session?</h2><p>Its progress won’t be saved.</p>
+    <div class="button-row"><button class="secondary dialog-close" autofocus>Keep focusing</button><button class="danger" id="reset-confirm">Reset session</button></div>
+  </div></dialog>
+
+  <dialog id="clear-dialog" aria-labelledby="clear-title"><div class="dialog-inner">
+    <h2 id="clear-title">Clear all data?</h2><p>Permanently removes 4 plants, preferences, and the current timer.</p>
+    <div class="button-row"><button class="secondary" id="export-first">Export first</button><button class="secondary dialog-close" autofocus>Cancel</button><button class="danger" id="clear-confirm">Clear all data</button></div>
+  </div></dialog>
+
+  <div class="completion"><dialog id="completion-dialog" aria-labelledby="completion-title"><div class="dialog-inner">
+    <div class="eyebrow">Session complete</div><h2 id="completion-title">A new fern grew</h2>
+    <div class="completion-art" aria-hidden="true">🌿</div><p><strong id="completion-minutes">25 focused minutes</strong><br><span id="completion-task">Untitled focus session</span></p>
+    <div class="button-row"><button class="primary" id="start-break">Start 5-minute break</button><button class="secondary" id="view-garden">View garden</button><button class="quiet dialog-close">Close</button></div>
+  </div></dialog></div>
+
+  <script>
+    (() => {
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+      const state = { status: "ready", minutes: 25, label: "", completed: 0, interval: null };
+
+      function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        $("#quick-theme").value = theme;
+        $$('input[name="theme"]').forEach(input => input.checked = input.value === theme);
+      }
+      $("#quick-theme").addEventListener("change", event => setTheme(event.target.value));
+      $$('input[name="theme"]').forEach(input => input.addEventListener("change", () => setTheme(input.value)));
+
+      function showView(view, focusHeading = true) {
+        $("#focus-view").hidden = view !== "focus";
+        $("#garden-view").hidden = view !== "garden";
+        $$(".nav-btn[data-view]").forEach(button => {
+          if (button.dataset.view === view) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        if (focusHeading) $("#" + view + "-heading").focus();
+      }
+      $$(".nav-btn[data-view]").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+
+      function syncTimer() {
+        const active = state.status === "running" || state.status === "paused";
+        $("#setup-form").hidden = active;
+        $("#locked-summary").hidden = !active;
+        $("#summary-text").textContent = `${state.minutes} minutes${state.label ? " · " + state.label : ""}`;
+        $("#timer-action").textContent = state.status === "ready" ? "Start focus" : state.status === "running" ? "Pause" : "Resume";
+        $("#mode-text").textContent = `Focus · ${state.status}`;
+        $("#session-status").textContent = state.status === "running" ? "Growing quietly · sound on" :
+          state.status === "paused" ? "Paused · your progress is held" : "Your garden stays on this device.";
+        $("#timer-live").textContent = `${state.minutes} minutes, ${state.status}`;
+      }
+      $("#timer-action").addEventListener("click", () => {
+        if (state.status === "ready") {
+          state.minutes = Number($('input[name="preset"]:checked').value);
+          state.label = $("#task-label").value.trim();
+          state.status = "running";
+        } else state.status = state.status === "running" ? "paused" : "running";
+        syncTimer();
+      });
+      $("#reset-action").addEventListener("click", () => {
+        if (state.status === "ready") {
+          $("#data-message").textContent = "Session is already reset.";
+          $("#session-status").textContent = "Session is already reset.";
+        } else $("#reset-dialog").showModal();
+      });
+      $("#reset-confirm").addEventListener("click", () => {
+        state.status = "ready"; syncTimer(); $("#reset-dialog").close();
+        $("#session-status").textContent = "Session reset.";
+      });
+
+      function completeSession() {
+        if (state.status === "ready") {
+          state.minutes = Number($('input[name="preset"]:checked').value);
+          state.label = $("#task-label").value.trim();
+        }
+        state.status = "ready"; state.completed += 1; syncTimer();
+        $("#completion-minutes").textContent = `${state.minutes} focused minutes`;
+        $("#completion-task").textContent = state.label || "Untitled focus session";
+        $("#completion-dialog").showModal();
+      }
+      $("#complete-demo").addEventListener("click", completeSession);
+      $("#view-garden").addEventListener("click", () => {
+        $("#completion-dialog").close(); addTodayPlant(); showView("garden");
+      });
+      $("#start-break").addEventListener("click", () => {
+        $("#completion-dialog").close(); $("#time-text").textContent = "05:00"; $("#mode-text").textContent = "Break · ready";
+        $("#session-status").textContent = "Break ready. Your fern is planted.";
+      });
+      function addTodayPlant() {
+        if ($("#today-plants .plant")) return;
+        const plant = document.createElement("button");
+        plant.className = "plant"; plant.textContent = "🌿";
+        Object.assign(plant.dataset, { plant:"Fern", time:"Thu, Oct 8 · 10:42 AM", minutes:String(state.minutes), task:state.label || "Untitled focus session" });
+        plant.setAttribute("aria-label", `Fern, today, ${state.minutes} focused minutes`);
+        $("#today-plants").append(plant); $("#today-empty").hidden = true;
+        $("#minutes").textContent = `${100 + state.minutes} min`;
+      }
+      $("#garden-view").addEventListener("click", event => {
+        const plant = event.target.closest(".plant"); if (!plant) return;
+        $("#plant-name").textContent = plant.dataset.plant; $("#plant-time").textContent = plant.dataset.time;
+        $("#plant-minutes").textContent = `${plant.dataset.minutes} minutes`; $("#plant-task").textContent = plant.dataset.task;
+        $("#plant-detail").hidden = false; $("#plant-name").focus();
+      });
+      $("#detail-close").addEventListener("click", () => $("#plant-detail").hidden = true);
+
+      const settings = $("#settings-dialog");
+      $("#settings-open").addEventListener("click", () => settings.showModal());
+      $$(".dialog-close").forEach(button => button.addEventListener("click", () => button.closest("dialog").close()));
+      $("#import-start").addEventListener("click", () => {
+        ["#import-preview","#import-error","#data-message"].forEach(id => $(id).hidden = true); $("#import-choose").hidden = false;
+      });
+      $("#sample-valid").addEventListener("click", () => { $("#import-choose").hidden = true; $("#import-preview").hidden = false; });
+      $("#sample-invalid").addEventListener("click", () => { $("#import-choose").hidden = true; $("#import-error").hidden = false; $("#import-error").focus(); });
+      $("#choose-another").addEventListener("click", () => { $("#import-error").hidden = true; $("#import-choose").hidden = false; });
+      $$(".import-cancel").forEach(button => button.addEventListener("click", () => { $("#import-preview").hidden = true; }));
+      $("#import-replace").addEventListener("click", () => {
+        $("#import-preview").hidden = true; $("#data-message").hidden = false;
+        $("#data-message").textContent = "Garden imported. 18 plants are now in your garden.";
+      });
+      function exportData() {
+        $("#data-message").hidden = false; $("#data-message").textContent = "Garden export prepared (prototype — no file is saved).";
+      }
+      $("#export-data").addEventListener("click", exportData); $("#export-first").addEventListener("click", exportData);
+      $("#clear-start").addEventListener("click", () => $("#clear-dialog").showModal());
+      $("#clear-confirm").addEventListener("click", () => {
+        $("#clear-dialog").close(); if (!settings.open) settings.showModal(); $("#data-message").hidden = false;
+        $("#data-message").textContent = "All Focus Garden data cleared.";
+        $("#today-plants").replaceChildren(); $("#today-empty").hidden = false; $("#minutes").textContent = "0 min"; $("#streak").textContent = "0-day";
+      });
+      syncTimer();
+    })();
+  </script>
+</body>
+</html>

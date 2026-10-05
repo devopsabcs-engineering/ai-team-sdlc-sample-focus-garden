@@ -1,0 +1,47 @@
+{
+  "testedAt": "2026-10-05T14:11:59.762Z",
+  "prototype": "prototype/index.html",
+  "browser": "Chromium (Playwright, headless)",
+  "viewports": [
+    "1280x900",
+    "360x800"
+  ],
+  "consoleErrors": [],
+  "results": [
+    {
+      "name": "desktop timer",
+      "result": "PASS",
+      "detail": "start, pause, resume, cancel reset, and confirm reset"
+    },
+    {
+      "name": "completion and garden",
+      "result": "PASS",
+      "detail": "completion reward adds a plant; keyboard-addressable detail shows task and minutes"
+    },
+    {
+      "name": "themes",
+      "result": "PASS",
+      "detail": "Botanical Garden, Golden Hour, and Midnight Garden apply from settings"
+    },
+    {
+      "name": "data settings",
+      "result": "PASS",
+      "detail": "invalid import, valid replacement preview/result, and clear cancel/confirm states"
+    },
+    {
+      "name": "mobile and keyboard smoke",
+      "result": "PASS",
+      "detail": "360px has no overflow, bottom navigation, stacked garden, full-height settings, and skip-link-first tab"
+    },
+    {
+      "name": "reduced motion",
+      "result": "PASS",
+      "detail": "browser preference yields --motion-grow 0ms and transition 1e-06s"
+    },
+    {
+      "name": "console health",
+      "result": "PASS",
+      "detail": "zero console errors and zero uncaught page errors across all contexts"
+    }
+  ]
+}
