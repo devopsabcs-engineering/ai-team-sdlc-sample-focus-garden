@@ -229,7 +229,7 @@ test("supports all themes without losing timer data and honors reduced motion", 
   await page.getByRole("button", { name: "Settings" }).click();
   const settings = page.getByRole("dialog", { name: "Settings" });
   for (const [label, id] of [
-    ["Golden Hour", "golden"],
+    ["High Contrast", "golden"],
     ["Midnight Garden", "midnight"],
     ["Botanical Garden", "botanical"],
   ] as const) {

@@ -110,6 +110,7 @@ export function createShell(options: ShellOptions): HTMLElement {
   });
   skip.addEventListener("click", (event) => {
     event.preventDefault();
+    delete main.dataset.routeFocus;
     main.focus();
   });
   main.append(

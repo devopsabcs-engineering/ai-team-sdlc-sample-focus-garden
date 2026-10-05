@@ -83,7 +83,7 @@ export interface ThemeOption {
 
 export const THEME_OPTIONS: readonly ThemeOption[] = [
   { id: "botanical", label: "Botanical Garden" },
-  { id: "golden", label: "Golden Hour" },
+  { id: "golden", label: "High Contrast" },
   { id: "midnight", label: "Midnight Garden" },
 ];
 

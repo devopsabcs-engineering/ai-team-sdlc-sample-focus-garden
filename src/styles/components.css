@@ -370,8 +370,8 @@
 
 .garden-plant__art {
   display: block;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 4rem;
+  height: 4rem;
   overflow: visible;
   fill: none;
   stroke-linecap: round;
@@ -386,20 +386,20 @@
 
 .garden-plant__art .reward-plant__stem,
 .garden-plant__art .reward-plant__leaf {
-  stroke: var(--success);
+  stroke: var(--plant-stem, var(--success));
 }
 
 .garden-plant__art .reward-plant__leaf {
-  fill: var(--action-soft);
+  fill: var(--plant-leaf, var(--action-soft));
 }
 
 .garden-plant__art .reward-plant__bloom {
-  fill: var(--plant-highlight);
-  stroke: var(--accent);
+  fill: var(--plant-bloom, var(--plant-highlight));
+  stroke: var(--plant-outline, var(--accent));
 }
 
 .garden-plant__art .reward-plant__accent {
-  stroke: var(--accent);
+  stroke: var(--plant-detail, var(--accent));
 }
 
 .garden-day__more {
@@ -491,7 +491,7 @@
 
 .completion-dialog__art {
   display: grid;
-  min-height: 13rem;
+  min-height: 17rem;
   place-items: center;
 }
 
@@ -500,7 +500,7 @@
 }
 
 .reward-plant {
-  width: min(14rem, 65vw);
+  width: min(17rem, 72vw);
   overflow: visible;
   fill: none;
   stroke-linecap: round;
@@ -515,23 +515,152 @@
 
 .reward-plant__stem,
 .reward-plant__leaf {
-  stroke: var(--success);
+  stroke: var(--plant-stem, var(--success));
 }
 
 .reward-plant__leaf {
-  fill: var(--action-soft);
+  fill: var(--plant-leaf, var(--action-soft));
 }
 
 .completion-dialog .reward-plant__bloom {
-  fill: var(--plant-highlight);
-  stroke: var(--accent);
+  fill: var(--plant-bloom, var(--plant-highlight));
+  stroke: var(--plant-outline, var(--accent));
   transform-box: fill-box;
   transform-origin: center bottom;
   animation: reward-bloom var(--motion-grow) var(--ease-standard) both;
 }
 
 .reward-plant__accent {
-  stroke: var(--accent);
+  stroke: var(--plant-detail, var(--accent));
+}
+
+/* Each specimen has its own theme-tuned palette as well as a unique outline.
+   Dark outlines keep the small garden rendering legible on light surfaces;
+   Midnight uses luminous fills against its raised surface. */
+[data-theme="botanical"] .plant-art--emberleaf {
+  --plant-bloom: #e45b35;
+  --plant-outline: #72230f;
+  --plant-detail: #fff3d6;
+  --plant-leaf: #cfe3c0;
+}
+
+[data-theme="botanical"] .plant-art--moonbell {
+  --plant-bloom: #7d86d8;
+  --plant-outline: #30366f;
+  --plant-detail: #f7f1ff;
+  --plant-leaf: #c9dfd2;
+}
+
+[data-theme="botanical"] .plant-art--cloudfern {
+  --plant-bloom: #55a875;
+  --plant-outline: #205334;
+  --plant-detail: #e9f7d5;
+  --plant-leaf: #b9d9a8;
+}
+
+[data-theme="botanical"] .plant-art--sunspindle {
+  --plant-bloom: #f2b928;
+  --plant-outline: #704800;
+  --plant-detail: #6b3c00;
+  --plant-leaf: #d7dfa5;
+}
+
+[data-theme="botanical"] .plant-art--dewstar {
+  --plant-bloom: #5db9ca;
+  --plant-outline: #175567;
+  --plant-detail: #f1ffff;
+  --plant-leaf: #b9ded2;
+}
+
+[data-theme="botanical"] .plant-art--quietbloom {
+  --plant-bloom: #c66ca5;
+  --plant-outline: #6b2852;
+  --plant-detail: #fff0d2;
+  --plant-leaf: #d2dfbd;
+}
+
+[data-theme="golden"] .plant-art--emberleaf {
+  --plant-bloom: #d94b28;
+  --plant-outline: #651b0a;
+  --plant-detail: #fff4d8;
+  --plant-leaf: #d3d9a6;
+}
+
+[data-theme="golden"] .plant-art--moonbell {
+  --plant-bloom: #686fc4;
+  --plant-outline: #292d68;
+  --plant-detail: #fff8ec;
+  --plant-leaf: #c3d4b0;
+}
+
+[data-theme="golden"] .plant-art--cloudfern {
+  --plant-bloom: #438b59;
+  --plant-outline: #18482a;
+  --plant-detail: #f5ffd9;
+  --plant-leaf: #b6cc91;
+}
+
+[data-theme="golden"] .plant-art--sunspindle {
+  --plant-bloom: #e7a800;
+  --plant-outline: #674000;
+  --plant-detail: #5c3100;
+  --plant-leaf: #d8ce83;
+}
+
+[data-theme="golden"] .plant-art--dewstar {
+  --plant-bloom: #3097aa;
+  --plant-outline: #104b5b;
+  --plant-detail: #f2ffff;
+  --plant-leaf: #aed0b3;
+}
+
+[data-theme="golden"] .plant-art--quietbloom {
+  --plant-bloom: #b45592;
+  --plant-outline: #612146;
+  --plant-detail: #fff0d3;
+  --plant-leaf: #c8cf9a;
+}
+
+[data-theme="midnight"] .plant-art--emberleaf {
+  --plant-bloom: #ff7957;
+  --plant-outline: #ffd0a8;
+  --plant-detail: #4d160f;
+  --plant-leaf: #315f45;
+}
+
+[data-theme="midnight"] .plant-art--moonbell {
+  --plant-bloom: #aab1ff;
+  --plant-outline: #e4ddff;
+  --plant-detail: #30265e;
+  --plant-leaf: #355c52;
+}
+
+[data-theme="midnight"] .plant-art--cloudfern {
+  --plant-bloom: #74dc98;
+  --plant-outline: #d6ffd5;
+  --plant-detail: #17452b;
+  --plant-leaf: #356341;
+}
+
+[data-theme="midnight"] .plant-art--sunspindle {
+  --plant-bloom: #ffd24f;
+  --plant-outline: #fff0a6;
+  --plant-detail: #593b00;
+  --plant-leaf: #536136;
+}
+
+[data-theme="midnight"] .plant-art--dewstar {
+  --plant-bloom: #64d7ed;
+  --plant-outline: #d9fbff;
+  --plant-detail: #164758;
+  --plant-leaf: #32625c;
+}
+
+[data-theme="midnight"] .plant-art--quietbloom {
+  --plant-bloom: #f08bc8;
+  --plant-outline: #ffe0f3;
+  --plant-detail: #592044;
+  --plant-leaf: #4a613f;
 }
 
 .completion-dialog .reward-plant__stem,

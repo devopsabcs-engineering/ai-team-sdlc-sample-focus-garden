@@ -44,6 +44,18 @@ a {
   outline-offset: var(--focus-offset);
 }
 
+/* Route changes retain a screen-reader target without framing the whole page
+   after pointer/script navigation. Keyboard-triggered routes and the skip link
+   continue to use the shared :focus-visible treatment. */
+main[data-route-focus="programmatic"]:focus {
+  outline: none;
+}
+
+main[data-route-focus="keyboard"]:focus {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
 h1,
 h2,
 p,

@@ -40,6 +40,8 @@
     "node": ">=24 <25"
   },
   "overrides": {
-    "playwright-core": "1.61.1"
+    "playwright-core": "1.61.1",
+    "third-party-web": "0.29.2",
+    "legacy-javascript": "0.0.1"
   }
 }

@@ -157,6 +157,43 @@ describe("timer application integration", () => {
     vi.useRealTimers();
   });
 
+  it("classifies script route changes as programmatic even from focused main", () => {
+    const { controller, root } = setup();
+    const main = root.querySelector<HTMLElement>("#main-content");
+    if (main === null) throw new Error("Missing main content.");
+    main.focus();
+
+    controller.navigate("garden");
+
+    expect(
+      root.querySelector("#main-content")?.getAttribute("data-route-focus"),
+    ).toBe("programmatic");
+  });
+
+  it("classifies only an Enter-activated route link as keyboard navigation", () => {
+    const { controller, root } = setup();
+    const link = root.querySelector<HTMLAnchorElement>(
+      '.primary-nav--header a[href="#garden"]',
+    );
+    if (link === null) throw new Error("Missing garden navigation.");
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    link.focus();
+    link.dispatchEvent(
+      new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }),
+    );
+    link.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true, detail: 0 }),
+    );
+
+    controller.navigate("garden");
+
+    expect(
+      root.querySelector("#main-content")?.getAttribute("data-route-focus"),
+    ).toBe("keyboard");
+  });
+
   it("configures exact paired presets and persists a trimmed locked label", () => {
     const { idNext, repository, root } = setup();
     const label = root.querySelector<HTMLInputElement>("#task-label-compact");

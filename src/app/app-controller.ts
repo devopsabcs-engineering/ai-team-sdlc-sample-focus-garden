@@ -52,6 +52,11 @@ import type { CompletionAudio, ExclusiveLock } from "./effects";
 import { localDateStamp, type DataExporter } from "./data-effects";
 import { applyTheme, persistExplicitTheme } from "./theme";
 
+const ROUTE_LINKS = new Map<string, Route>([
+  ["#focus", "focus"],
+  ["#garden", "garden"],
+]);
+
 export interface FocusCompletionDue {
   readonly timerId: string;
   readonly completionBoundary: string;
@@ -81,6 +86,11 @@ export class AppController {
   readonly #reportedDue = new Set<string>();
   readonly #completionInFlight = new Set<string>();
   readonly #emittedCompletions = new Set<string>();
+  #pendingKeyboardRouteLink: HTMLAnchorElement | null = null;
+  #keyboardRouteActivation: {
+    readonly link: HTMLAnchorElement;
+    readonly route: Route;
+  } | null = null;
 
   constructor(options: {
     root: HTMLElement;
@@ -122,6 +132,34 @@ export class AppController {
         options.loaded.code === "newer-version");
     this.#taskLabel = this.#state.activeTimer?.taskLabel ?? "";
 
+    this.#root.addEventListener("keydown", (event) => {
+      const link = this.#routeLink(event.target);
+      this.#pendingKeyboardRouteLink =
+        event.key === "Enter" &&
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        link !== null
+          ? link
+          : null;
+      this.#keyboardRouteActivation = null;
+    });
+    this.#root.addEventListener("pointerdown", () => {
+      this.#pendingKeyboardRouteLink = null;
+      this.#keyboardRouteActivation = null;
+    });
+    this.#root.addEventListener("click", (event) => {
+      const link = this.#routeLink(event.target);
+      const route = link === null ? null : this.#routeFromLink(link);
+      this.#keyboardRouteActivation =
+        event.detail === 0 &&
+        link !== null &&
+        link === this.#pendingKeyboardRouteLink &&
+        route !== null
+          ? { link, route }
+          : null;
+      this.#pendingKeyboardRouteLink = null;
+    });
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") this.reconcile();
     });
@@ -175,9 +213,31 @@ export class AppController {
 
   navigate(route: Route): void {
     if (route === this.#route && this.#root.hasChildNodes()) return;
+    const activation = this.#keyboardRouteActivation;
+    this.#keyboardRouteActivation = null;
+    const keyboardRoute =
+      activation?.route === route &&
+      activation.link.isConnected &&
+      activation.link.ownerDocument.activeElement === activation.link;
     this.#route = route;
     this.render();
-    this.#root.querySelector<HTMLElement>("#main-content")?.focus();
+    const main = this.#root.querySelector<HTMLElement>("#main-content");
+    if (main === null) return;
+    main.dataset.routeFocus = keyboardRoute ? "keyboard" : "programmatic";
+    main.focus();
+  }
+
+  #routeLink(target: EventTarget | null): HTMLAnchorElement | null {
+    if (!(target instanceof Element)) return null;
+    const link = target.closest<HTMLAnchorElement>(
+      'a[href="#focus"], a[href="#garden"]',
+    );
+    return link !== null && this.#root.contains(link) ? link : null;
+  }
+
+  #routeFromLink(link: HTMLAnchorElement): Route | null {
+    const hash = link.getAttribute("href");
+    return hash === null ? null : (ROUTE_LINKS.get(hash) ?? null);
   }
 
   selectTheme(theme: ThemeId): void {
