@@ -1,0 +1,23 @@
+npm notice run focus-garden@0.1.0 test:e2e
+npm notice run playwright test
+[WebServer] npm notice run focus-garden@0.1.0 preview
+[WebServer] npm notice run node tests/preview-server.mjs
+
+Running 14 tests using 6 workers
+
+  ✓   4 [chromium] › tests\e2e\acceptance.spec.ts:320:1 › invalid import preserves existing data (681ms)
+  ✓   2 [chromium] › tests\e2e\acceptance.spec.ts:133:1 › credits one completion across reload and runs a non-rewarding explicit break (879ms)
+  ✓   1 [chromium] › tests\e2e\acceptance.spec.ts:95:1 › runs exact focus presets, locks the trimmed label, and recovers pause on reload (1.2s)
+  ✓   7 [chromium] › tests\e2e\acceptance.spec.ts:336:1 › failed import replacement preserves browser storage (593ms)
+  ✓   6 [chromium] › tests\e2e\acceptance.spec.ts:255:1 › exports, previews and cancels import, replaces atomically, and clears only after confirmation (1.7s)
+  ✓   9 [chromium] › tests\e2e\pwa.spec.ts:14:1 › first online load supports an offline reload and core timer flow (899ms)
+  ✓  10 [chromium] › tests\e2e\pwa.spec.ts:31:1 › all runtime requests remain same-origin and inside the repository path (774ms)
+  ✓  13 [chromium] › tests\e2e\pwa.spec.ts:114:1 › registration failure preserves the online core experience (308ms)
+  ✓   8 [chromium] › tests\e2e\acceptance.spec.ts:382:1 › 360px reflow, mobile detail dialog, keyboard navigation, and axe smoke pass (1.7s)
+  ✓  12 [chromium] › tests\e2e\pwa.spec.ts:89:1 › a waiting version requires explicit update action (971ms)
+  ✓  11 [chromium] › tests\e2e\pwa.spec.ts:58:1 › manifest and controlling worker are installable at the exact subpath (1.3s)
+  ✓   5 [chromium] › tests\e2e\acceptance.spec.ts:184:1 › shows weekly totals, streak, labels, dense plants, and keyboard-restored details (3.4s)
+  ✓  14 [chromium] › tests\e2e\pwa.spec.ts:134:1 › @a11y production shell has no serious or critical axe violations (1.6s)
+  ✓   3 [chromium] › tests\e2e\acceptance.spec.ts:221:1 › supports all themes without losing timer data and honors reduced motion (5.8s)
+
+  14 passed (8.6s)

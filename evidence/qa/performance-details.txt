@@ -1,0 +1,3 @@
+{"run":1,"performance":0.99,"fcpMs":1355,"scriptBytes":58608,"totalBytes":86497,"consoleErrors":0}
+{"run":2,"performance":0.99,"fcpMs":1347,"scriptBytes":58608,"totalBytes":86497,"consoleErrors":0}
+{"run":3,"performance":0.99,"fcpMs":1355,"scriptBytes":58608,"totalBytes":86497,"consoleErrors":0}

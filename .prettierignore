@@ -1,0 +1,17 @@
+dist
+coverage
+playwright-report
+test-results
+node_modules
+prototype
+docs
+evidence
+specs
+.github
+AGENTS.md
+README.md
+docs/design/prototype-evidence
+package-lock.json
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

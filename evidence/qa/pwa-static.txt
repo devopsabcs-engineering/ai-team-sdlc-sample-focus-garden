@@ -1,0 +1,3 @@
+npm notice run focus-garden@0.1.0 test:pwa
+npm notice run node tests/static-pwa-check.mjs
+Static PWA checks passed.
