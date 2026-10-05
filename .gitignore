@@ -11,3 +11,5 @@ vite.config.d.ts
 
 evidence/logs/
 evidence/*-console.txt
+
+evidence/run-*.md
